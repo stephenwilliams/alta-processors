@@ -42,7 +42,7 @@ public class DefaultConstructor extends AbstractProcessor {
 	@Override
 	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 		for (TypeElement type : ElementFilter.typesIn(roundEnv.getRootElements())) {
-			if (type.getAnnotation(RequireDefault.class) != null) {
+			if (type.getAnnotation(RequireDefault.class) != null && !type.getKind().isInterface()) {
 				hasConstructor(type);
 			}
 		}
