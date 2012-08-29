@@ -21,6 +21,7 @@ package com.alta189.processors;
 
 import java.util.Set;
 import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
@@ -31,7 +32,9 @@ import javax.lang.model.util.ElementFilter;
 import javax.tools.Diagnostic;
 
 import com.alta189.annotations.RequireDefault;
+import org.kohsuke.MetaInfServices;
 
+@MetaInfServices(Processor.class)
 @SupportedAnnotationTypes("*")
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
 public class DefaultConstructor extends AbstractProcessor {

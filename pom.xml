@@ -2,11 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+	<modelVersion>4.0.0</modelVersion>
 	<name>alta-processors</name>
-    <groupId>com.alta189</groupId>
-    <artifactId>processors</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+	<groupId>com.alta189</groupId>
+	<artifactId>processors</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
 	<url>http://github.com/alta189/alta-processors</url>
 	<inceptionYear>2012</inceptionYear>
 
@@ -30,19 +30,17 @@
 		</snapshotRepository>
 	</distributionManagement>
 
+	<dependencies>
+		<dependency>
+			<groupId>org.kohsuke.metainf-services</groupId>
+			<artifactId>metainf-services</artifactId>
+			<version>1.1</version>
+			<optional>true</optional>
+		</dependency>
+	</dependencies>
+
 	<build>
 		<defaultGoal>clean package</defaultGoal>
-
-		<resources>
-			<resource>
-				<targetPath>META-INF/services</targetPath>
-				<filtering>false</filtering>
-				<directory>${basedir}/src/main/resources</directory>
-				<includes>
-					<include>javax.annotation.processing.Processor</include>
-				</includes>
-			</resource>
-		</resources>
 
 		<plugins>
 			<!-- License headers check plugin -->
@@ -94,28 +92,6 @@
 					<verbose>true</verbose>
 					<showWarnings>true</showWarnings>
 					<showDeprecation>true</showDeprecation>
-				</configuration>
-			</plugin>
-			<!-- JAR creation plugin -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.4</version>
-				<configuration>
-					<archive>
-						<manifestEntries>
-							<Implementation-Title>${project.name}</Implementation-Title>
-							<Sealed>true</Sealed>
-						</manifestEntries>
-						<manifestSections>
-							<manifestSection>
-								<name>com/alta189/</name>
-								<manifestEntries>
-									<Sealed>true</Sealed>
-								</manifestEntries>
-							</manifestSection>
-						</manifestSections>
-					</archive>
 				</configuration>
 			</plugin>
 		</plugins>
