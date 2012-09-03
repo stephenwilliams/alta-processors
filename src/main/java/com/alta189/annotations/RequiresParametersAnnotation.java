@@ -27,13 +27,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Any methods annotated with this will
- * be required to have the parameters defined.
+ * Any annotation marked with this annotation will
+ * have the same affect as the {@link RequiresParameters}
+ *
+ * @since 1.0.0
  */
 @Documented
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface RequiresParameters {
+@Target(ElementType.ANNOTATION_TYPE)
+public @interface RequiresParametersAnnotation {
+
 	public String[] value();
+
 }
