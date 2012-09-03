@@ -35,17 +35,6 @@ import java.lang.annotation.Target;
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface ConstructorParameters {
-	/**
-	 * Each entry in the array represents a separate constructor </ br>
-	 * Example: to require a type to have two constructors one having the
-	 * parameter types String and boolean and one having String, boolean, and int.
-	 * You would do the following: </ br>
-	 * <code>@ConstructorParameters({"String; boolean", "String; boolean; int"})</code>
-	 * </ br>
-	 * Multiple parameters in a constructor should be separated with <code>;</code>
-	 *
-	 * @return value representing required constructor(s) parameters
-	 */
-	String[] value();
+public @interface RequiredConstructors {
+	Constructor[] value();
 }
