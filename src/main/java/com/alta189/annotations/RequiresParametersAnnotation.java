@@ -29,7 +29,6 @@ import java.lang.annotation.Target;
 /**
  * Any annotation marked with this annotation will
  * have the same affect as the {@link RequiresParameters}
- *
  * @since 1.0.0
  */
 @Documented
@@ -37,7 +36,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)
 public @interface RequiresParametersAnnotation {
-
 	public String[] value();
-
 }

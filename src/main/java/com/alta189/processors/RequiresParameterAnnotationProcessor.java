@@ -19,7 +19,6 @@
  */
 package com.alta189.processors;
 
-import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
@@ -29,7 +28,6 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.ElementFilter;
-import javax.tools.Diagnostic;
 import java.util.List;
 import java.util.Set;
 
@@ -40,7 +38,7 @@ import org.kohsuke.MetaInfServices;
 @MetaInfServices(Processor.class)
 @SupportedAnnotationTypes("*")
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
-public class RequiresParameterAnnotationProcessor extends AbstractProcessor {
+public class RequiresParameterAnnotationProcessor extends GenericProcessor {
 	@Override
 	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 		for (TypeElement e : annotations) {
@@ -52,12 +50,12 @@ public class RequiresParameterAnnotationProcessor extends AbstractProcessor {
 					for (int i = 0; i < requiresParameters.value().length; i++) {
 						if (!requiresParameters.value()[i].equals(parameters.get(i).asType().toString())) {
 							if (!("java.lang." + requiresParameters.value()[i]).equals(parameters.get(i).asType().toString())) {
-								processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "missing the required parameters", method);
+								error("missing the required parameters", method);
 							}
 						}
 					}
 				} else {
-					processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "missing the required parameters", method);
+					error("missing the required parameters", method);
 				}
 			}
 		}

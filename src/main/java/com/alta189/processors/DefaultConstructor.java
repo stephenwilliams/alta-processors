@@ -19,8 +19,6 @@
  */
 package com.alta189.processors;
 
-import java.util.Set;
-import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
@@ -29,16 +27,16 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.ElementFilter;
-import javax.tools.Diagnostic;
+import java.util.Set;
 
 import com.alta189.annotations.RequireDefault;
+
 import org.kohsuke.MetaInfServices;
 
 @MetaInfServices(Processor.class)
-@SupportedAnnotationTypes("*")
+@SupportedAnnotationTypes("com.alta189.annotations.RequireDefault")
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
-public class DefaultConstructor extends AbstractProcessor {
-
+public class DefaultConstructor extends GenericProcessor {
 	@Override
 	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 		for (TypeElement type : ElementFilter.typesIn(roundEnv.getRootElements())) {
@@ -55,6 +53,6 @@ public class DefaultConstructor extends AbstractProcessor {
 				return;
 			}
 		}
-		processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "missing default (no-args) constructor", type);
+		error("missing default (no-args) constructor", type);
 	}
 }
