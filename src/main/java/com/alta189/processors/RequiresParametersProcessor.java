@@ -26,8 +26,10 @@ import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.MirroredTypesException;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -41,32 +43,42 @@ import org.kohsuke.MetaInfServices;
 public class RequiresParametersProcessor extends GenericProcessor {
 	@Override
 	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-		for (ExecutableElement e : ElementFilter.methodsIn(roundEnv.getElementsAnnotatedWith(RequiresParameters.class))) {
-			RequiresParameters requiresParameters = e.getAnnotation(RequiresParameters.class);
-			if (!passes(e)) {
-				error("missing the required parameters", e);
+		for (ExecutableElement method : ElementFilter.methodsIn(roundEnv.getElementsAnnotatedWith(RequiresParameters.class))) {
+			RequiresParameters requiresParameters = method.getAnnotation(RequiresParameters.class);
+			if (requiresParameters != null) {
+				if (!hasParameters(method, requiresParameters)) {
+					error("missing required method parameters", method);
+				}
 			}
 		}
 		return true;
 	}
 
-	public boolean passes(ExecutableElement element) {
-		boolean passes = true;
-
-		List<? extends VariableElement> parameters = element.getParameters();
-		RequiresParameters requiresParameters = element.getAnnotation(RequiresParameters.class);
-
-		if (parameters.size() == requiresParameters.value().length) {
-			for (int i = 0; i < requiresParameters.value().length; i++) {
-				if (!requiresParameters.value()[i].equals(parameters.get(i).asType().toString())) {
-					if (!("java.lang." + requiresParameters.value()[i]).equals(parameters.get(i).asType().toString())) {
-						passes = false;
+	public boolean hasParameters(ExecutableElement method, RequiresParameters requiresParameters) {
+		List<TypeMirror> parameters = getTypeMirrors(requiresParameters);
+		if (parameters != null && parameters.size() > 0) {
+			if (method.getParameters().size() == parameters.size()) {
+				boolean matches = true;
+				for (int i = 0; i < parameters.size(); i++) {
+					if (!parameters.get(i).equals(method.getParameters().get(i).asType())) {
+						matches = false;
 					}
 				}
+				return matches;
 			}
-		} else {
-			passes = false;
 		}
-		return passes;
+		return false;
+	}
+
+	public List<TypeMirror> getTypeMirrors(RequiresParameters parameters) {
+		List<TypeMirror> value = new LinkedList<TypeMirror>();
+		if (parameters != null) {
+			try {
+				parameters.value();
+			} catch (MirroredTypesException mte) {
+				value.addAll(mte.getTypeMirrors());
+			}
+		}
+		return value;
 	}
 }

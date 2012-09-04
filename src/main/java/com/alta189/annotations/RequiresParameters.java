@@ -35,5 +35,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface RequiresParameters {
-	public String[] value();
+	public Class<?>[] value();
 }

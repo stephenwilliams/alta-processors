@@ -34,7 +34,7 @@ import com.alta189.annotations.RequireDefault;
 import org.kohsuke.MetaInfServices;
 
 @MetaInfServices(Processor.class)
-@SupportedAnnotationTypes("com.alta189.annotations.RequireDefault")
+@SupportedAnnotationTypes("*")
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
 public class DefaultConstructor extends GenericProcessor {
 	@Override

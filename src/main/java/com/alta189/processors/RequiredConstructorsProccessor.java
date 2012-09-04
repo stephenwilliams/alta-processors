@@ -27,11 +27,9 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.type.MirroredTypesException;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -80,7 +78,7 @@ public class RequiredConstructorsProccessor extends GenericProcessor {
 
 	private boolean hasConstructor(TypeElement element, Constructor constructor) {
 		for (ExecutableElement executableElement : ElementFilter.constructorsIn(element.getEnclosedElements())) {
-			List<TypeMirror> parameters = getTypeElements(constructor);
+			List<TypeMirror> parameters = getTypeMirrors(constructor);
 			if (parameters != null && parameters.size() == executableElement.getParameters().size()) {
 				boolean matches = true;
 				for (int i = 0; i < parameters.size(); i++) {
@@ -94,7 +92,7 @@ public class RequiredConstructorsProccessor extends GenericProcessor {
 		return false;
 	}
 
-	public List<TypeMirror> getTypeElements(Constructor constructor) {
+	public List<TypeMirror> getTypeMirrors(Constructor constructor) {
 		List<TypeMirror> value = new LinkedList<TypeMirror>();
 		if (constructor != null) {
 			try {
