@@ -20,45 +20,34 @@
 package com.alta189.processors;
 
 import javax.annotation.processing.RoundEnvironment;
-import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.ElementFilter;
 import java.util.Set;
 
-import com.alta189.annotations.RequireDefault;
+import com.alta189.annotations.HashcodeRequired;
 
-public class DefaultConstructor extends AnnotationProcessor {
-	public DefaultConstructor(ParentProcessor parent) {
+public class HashcodeRequiredProcessor extends AnnotationProcessor {
+	public HashcodeRequiredProcessor(ParentProcessor parent) {
 		super(parent);
 	}
 
 	@Override
 	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-		for (TypeElement type : ElementFilter.typesIn(roundEnv.getElementsAnnotatedWith(RequireDefault.class))) {
-			if (!type.getKind().isInterface() && type.getKind() != ElementKind.ANNOTATION_TYPE) {
-				hasConstructor(type);
+		for (TypeElement type : ElementFilter.typesIn(roundEnv.getElementsAnnotatedWith(HashcodeRequired.class))) {
+			if (!hasHashcode(type)) {
+				error("Class does not override hashcode method", type);
 			}
 		}
-		for (TypeElement annotation : annotations) {
-			RequireDefault constructor = annotation.getAnnotation(RequireDefault.class);
-			if (constructor != null) {
-				for (TypeElement type : ElementFilter.typesIn(roundEnv.getElementsAnnotatedWith(annotation))) {
-					if (!type.getKind().isInterface()) {
-						hasConstructor(type);
-					}
-				}
-			}
-		}
-		return true;
+		return false;
 	}
 
-	private void hasConstructor(TypeElement type) {
-		for (ExecutableElement cons : ElementFilter.constructorsIn(type.getEnclosedElements())) {
-			if (cons.getParameters().isEmpty()) {
-				return;
+	public boolean hasHashcode(TypeElement type) {
+		for (ExecutableElement method : ElementFilter.methodsIn(type.getEnclosedElements())) {
+			if (method.getSimpleName().toString().equals("hashcode") && method.getParameters().size() == 0 && method.getReturnType().toString().equals("int")) {
+				return true;
 			}
 		}
-		error("missing default (no-args) constructor", type);
+		return false;
 	}
 }

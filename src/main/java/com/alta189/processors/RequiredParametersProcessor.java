@@ -19,11 +19,7 @@
  */
 package com.alta189.processors;
 
-import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
-import javax.annotation.processing.SupportedAnnotationTypes;
-import javax.annotation.processing.SupportedSourceVersion;
-import javax.lang.model.SourceVersion;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.MirroredTypesException;
@@ -33,29 +29,38 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import com.alta189.annotations.RequiresParameters;
+import com.alta189.annotations.RequiredParameters;
 
-import org.kohsuke.MetaInfServices;
+public class RequiredParametersProcessor extends AnnotationProcessor {
+	public RequiredParametersProcessor(ParentProcessor parent) {
+		super(parent);
+	}
 
-@MetaInfServices(Processor.class)
-@SupportedAnnotationTypes("com.alta189.annotations.RequiresParameters")
-@SupportedSourceVersion(SourceVersion.RELEASE_6)
-public class RequiresParametersProcessor extends GenericProcessor {
 	@Override
 	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-		for (ExecutableElement method : ElementFilter.methodsIn(roundEnv.getElementsAnnotatedWith(RequiresParameters.class))) {
-			RequiresParameters requiresParameters = method.getAnnotation(RequiresParameters.class);
-			if (requiresParameters != null) {
-				if (!hasParameters(method, requiresParameters)) {
+		for (ExecutableElement method : ElementFilter.methodsIn(roundEnv.getElementsAnnotatedWith(RequiredParameters.class))) {
+			RequiredParameters requiredParameters = method.getAnnotation(RequiredParameters.class);
+			if (requiredParameters != null) {
+				if (!hasParameters(method, requiredParameters)) {
 					error("missing required method parameters", method);
+				}
+			}
+		}
+		for (TypeElement annotation : annotations) {
+			RequiredParameters requiredParameters = annotation.getAnnotation(RequiredParameters.class);
+			if (requiredParameters != null) {
+				for (ExecutableElement method : ElementFilter.methodsIn(roundEnv.getElementsAnnotatedWith(annotation))) {
+					if (!hasParameters(method, requiredParameters)) {
+						error("missing required method parameters", method);
+					}
 				}
 			}
 		}
 		return true;
 	}
 
-	public boolean hasParameters(ExecutableElement method, RequiresParameters requiresParameters) {
-		List<TypeMirror> parameters = getTypeMirrors(requiresParameters);
+	public boolean hasParameters(ExecutableElement method, RequiredParameters requiredParameters) {
+		List<TypeMirror> parameters = getTypeMirrors(requiredParameters);
 		if (parameters != null && parameters.size() > 0) {
 			if (method.getParameters().size() == parameters.size()) {
 				boolean matches = true;
@@ -70,7 +75,7 @@ public class RequiresParametersProcessor extends GenericProcessor {
 		return false;
 	}
 
-	public List<TypeMirror> getTypeMirrors(RequiresParameters parameters) {
+	public List<TypeMirror> getTypeMirrors(RequiredParameters parameters) {
 		List<TypeMirror> value = new LinkedList<TypeMirror>();
 		if (parameters != null) {
 			try {

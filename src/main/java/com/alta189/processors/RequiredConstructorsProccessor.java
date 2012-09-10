@@ -19,11 +19,7 @@
  */
 package com.alta189.processors;
 
-import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
-import javax.annotation.processing.SupportedAnnotationTypes;
-import javax.annotation.processing.SupportedSourceVersion;
-import javax.lang.model.SourceVersion;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
@@ -37,12 +33,11 @@ import java.util.Set;
 import com.alta189.annotations.Constructor;
 import com.alta189.annotations.RequiredConstructors;
 
-import org.kohsuke.MetaInfServices;
+public class RequiredConstructorsProccessor extends AnnotationProcessor {
+	public RequiredConstructorsProccessor(ParentProcessor parent) {
+		super(parent);
+	}
 
-@MetaInfServices(Processor.class)
-@SupportedAnnotationTypes("*")
-@SupportedSourceVersion(SourceVersion.RELEASE_6)
-public class RequiredConstructorsProccessor extends GenericProcessor {
 	@Override
 	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 		for (TypeElement type : ElementFilter.typesIn(roundEnv.getElementsAnnotatedWith(RequiredConstructors.class))) {

@@ -17,23 +17,31 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.alta189.annotations;
+package com.alta189.processors;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import javax.annotation.processing.RoundEnvironment;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.TypeElement;
+import java.util.Set;
 
-/**
- * Any methods annotated with this will
- * be required to have the parameters defined.
- */
-@Documented
-@Inherited
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface RequiresParameters {
-	public Class<?>[] value();
+public abstract class AnnotationProcessor {
+	private final ParentProcessor parent;
+
+	public AnnotationProcessor(ParentProcessor parent) {
+		this.parent = parent;
+	}
+
+	public abstract boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv);
+
+	public void note(String msg, Element e) {
+		parent.note(msg, e);
+	}
+
+	public void warn(String msg, Element e) {
+		parent.warn(msg, e);
+	}
+
+	public void error(String msg, Element e) {
+		parent.error(msg, e);
+	}
 }

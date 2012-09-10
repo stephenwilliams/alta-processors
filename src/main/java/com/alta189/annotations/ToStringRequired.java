@@ -19,22 +19,14 @@
  */
 package com.alta189.annotations;
 
-import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * Any annotation marked with this annotation will
- * have the same affect as the {@link RequiresParameters}
- * @since 1.0.0
- */
-@Documented
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.ANNOTATION_TYPE)
-public @interface RequiresParametersAnnotation {
-	public String[] value();
+@Target(ElementType.TYPE)
+public @interface ToStringRequired {
 }

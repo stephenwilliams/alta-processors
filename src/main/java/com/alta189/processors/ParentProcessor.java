@@ -20,10 +20,42 @@
 package com.alta189.processors;
 
 import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.Processor;
+import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.SupportedAnnotationTypes;
+import javax.annotation.processing.SupportedSourceVersion;
+import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
+import java.util.HashSet;
+import java.util.Set;
 
-public abstract class GenericProcessor extends AbstractProcessor {
+import org.kohsuke.MetaInfServices;
+
+@MetaInfServices(Processor.class)
+@SupportedAnnotationTypes("*")
+@SupportedSourceVersion(SourceVersion.RELEASE_6)
+public class ParentProcessor extends AbstractProcessor {
+	private Set<AnnotationProcessor> processors = new HashSet<AnnotationProcessor>();
+
+	public ParentProcessor() {
+		processors.add(new DefaultConstructor(this));
+		processors.add(new RequiredConstructorsProccessor(this));
+		processors.add(new RequiredParametersProcessor(this));
+		processors.add(new EqualsRequiredProcessor(this));
+		processors.add(new ToStringRequiredProcessor(this));
+		processors.add(new HashcodeRequiredProcessor(this));
+	}
+
+	@Override
+	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+		for (AnnotationProcessor processor : processors) {
+			processor.process(annotations, roundEnv);
+		}
+		return false;
+	}
+
 	public void note(String msg, Element e) {
 		processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, msg, e);
 	}
