@@ -27,16 +27,25 @@ import java.util.Set;
 
 import com.alta189.annotations.HashcodeRequired;
 
-public class HashcodeRequiredProcessor extends AnnotationProcessor {
-	public HashcodeRequiredProcessor(ParentProcessor parent) {
+public class HashCodeRequiredProcessor extends AnnotationProcessor {
+	public HashCodeRequiredProcessor(ParentProcessor parent) {
 		super(parent);
 	}
 
 	@Override
 	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 		for (TypeElement type : ElementFilter.typesIn(roundEnv.getElementsAnnotatedWith(HashcodeRequired.class))) {
-			if (!hasHashcode(type)) {
-				error("Class does not override hashcode method", type);
+			if (!hasHashcode(type) && !type.getKind().isInterface()) {
+				error("Class does not override hashCode method", type);
+			}
+		}
+		for (TypeElement annotation : annotations) {
+			if (annotation.getAnnotation(HashcodeRequired.class) != null) {
+				for (TypeElement type : ElementFilter.typesIn(roundEnv.getElementsAnnotatedWith(annotation))) {
+					if (!hasHashcode(type) && !type.getKind().isInterface()) {
+						error("Class does not override hashCode method", type);
+					}
+				}
 			}
 		}
 		return false;
@@ -44,7 +53,7 @@ public class HashcodeRequiredProcessor extends AnnotationProcessor {
 
 	public boolean hasHashcode(TypeElement type) {
 		for (ExecutableElement method : ElementFilter.methodsIn(type.getEnclosedElements())) {
-			if (method.getSimpleName().toString().equals("hashcode") && method.getParameters().size() == 0 && method.getReturnType().toString().equals("int")) {
+			if (method.getSimpleName().toString().equals("hashCode") && method.getParameters().size() == 0 && method.getReturnType().toString().equals(int.class.getCanonicalName())) {
 				return true;
 			}
 		}

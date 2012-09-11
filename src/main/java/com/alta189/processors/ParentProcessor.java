@@ -45,7 +45,7 @@ public class ParentProcessor extends AbstractProcessor {
 		processors.add(new RequiredParametersProcessor(this));
 		processors.add(new EqualsRequiredProcessor(this));
 		processors.add(new ToStringRequiredProcessor(this));
-		processors.add(new HashcodeRequiredProcessor(this));
+		processors.add(new HashCodeRequiredProcessor(this));
 	}
 
 	@Override
