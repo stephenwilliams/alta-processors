@@ -35,8 +35,17 @@ public class ToStringRequiredProcessor extends AnnotationProcessor {
 	@Override
 	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 		for (TypeElement type : ElementFilter.typesIn(roundEnv.getElementsAnnotatedWith(ToStringRequired.class))) {
-			if (!hasToString(type)) {
+			if (!!type.getKind().isInterface() && !hasToString(type)) {
 				error("Class does not override toString method", type);
+			}
+		}
+		for (TypeElement annotation : annotations) {
+			if (annotation.getAnnotation(ToStringRequired.class) != null) {
+				for (TypeElement type : ElementFilter.typesIn(roundEnv.getElementsAnnotatedWith(annotation))) {
+					if (!type.getKind().isInterface() && !hasToString(type)) {
+						error("Class does not override toString method", type);
+					}
+				}
 			}
 		}
 		return false;
@@ -44,7 +53,7 @@ public class ToStringRequiredProcessor extends AnnotationProcessor {
 
 	public boolean hasToString(TypeElement type) {
 		for (ExecutableElement method : ElementFilter.methodsIn(type.getEnclosedElements())) {
-			if (method.getSimpleName().toString().equals("toString")) {
+			if (method.getSimpleName().toString().equals("toString") && method.getParameters().size() == 0 && method.getReturnType().toString().equals(String.class.getCanonicalName())) {
 				return true;
 			}
 		}
