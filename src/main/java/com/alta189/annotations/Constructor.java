@@ -24,6 +24,10 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+/**
+ * Used for the {@link RequiredConstructors} annotation to
+ * represent a required constructor
+ */
 @Documented
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)

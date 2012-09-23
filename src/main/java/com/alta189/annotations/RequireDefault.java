@@ -29,7 +29,6 @@ import java.lang.annotation.Target;
 /**
  * Any class marked with this annotation is required to
  * have a default (no-args) constructor
- *
  * @since 1.0.0
  */
 @Documented
