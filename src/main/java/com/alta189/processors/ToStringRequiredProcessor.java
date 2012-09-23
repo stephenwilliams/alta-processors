@@ -35,7 +35,7 @@ public class ToStringRequiredProcessor extends AnnotationProcessor {
 	@Override
 	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 		for (TypeElement type : ElementFilter.typesIn(roundEnv.getElementsAnnotatedWith(ToStringRequired.class))) {
-			if (!!type.getKind().isInterface() && !hasToString(type)) {
+			if (!type.getKind().isInterface() && !hasToString(type)) {
 				error("Class does not override toString method", type);
 			}
 		}
