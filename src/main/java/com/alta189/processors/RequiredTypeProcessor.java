@@ -22,9 +22,12 @@ package com.alta189.processors;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.MirroredTypeException;
+import javax.lang.model.type.MirroredTypesException;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import com.alta189.annotations.RequiredType;
@@ -55,18 +58,31 @@ public class RequiredTypeProcessor extends AnnotationProcessor {
 	}
 
 	public void checkRequiredType(VariableElement field, RequiredType requiredType) {
-		TypeMirror type = getRequriedType(requiredType);
-		if (!field.asType().equals(type)) {
-			error("wrong type; correct type is " + type.toString(), field);
+		List<TypeMirror> types = getRequriedType(requiredType);
+		if (!types.contains(field.asType())) {
+			StringBuilder builder = new StringBuilder();
+			builder.append("wrong type; correct type is any one of the following: ");
+
+			Iterator<TypeMirror> iterator = types.iterator();
+			while (iterator.hasNext()) {
+				TypeMirror type = iterator.next();
+				builder.append(type.toString());
+				if (iterator.hasNext()) {
+					builder.append(", ");
+				}
+			}
+
+			error(builder.toString(), field);
 		}
 	}
 
-	public TypeMirror getRequriedType(RequiredType requiredType) {
+	public List<TypeMirror> getRequriedType(RequiredType requiredType) {
+		List<TypeMirror> value = new LinkedList<TypeMirror>();
 		try {
 			requiredType.value();
-		} catch (MirroredTypeException e) {
-			return e.getTypeMirror();
+		} catch (MirroredTypesException e) {
+			value.addAll(e.getTypeMirrors());
 		}
-		return null;
+		return value;
 	}
 }
