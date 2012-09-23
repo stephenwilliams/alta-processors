@@ -27,8 +27,8 @@ import java.util.Set;
 
 import com.alta189.annotations.HashcodeRequired;
 
-public class HashCodeRequiredProcessor extends AnnotationProcessor {
-	public HashCodeRequiredProcessor(ParentProcessor parent) {
+public class HashcodeRequiredProcessor extends AnnotationProcessor {
+	public HashcodeRequiredProcessor(ParentProcessor parent) {
 		super(parent);
 	}
 
