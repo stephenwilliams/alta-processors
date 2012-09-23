@@ -53,7 +53,7 @@ public class EqualsRequiredProcessor extends AnnotationProcessor {
 
 	public boolean hasEquals(TypeElement type) {
 		for (ExecutableElement method : ElementFilter.methodsIn(type.getEnclosedElements())) {
-			if (method.getSimpleName().toString().equals("equals") ) {
+			if (method.getSimpleName().toString().equals("equals")) {
 				if (method.getParameters().size() == 1 && method.getParameters().get(0).asType().toString().equals(Object.class.getCanonicalName())) {
 					if (method.getReturnType().toString().equals(boolean.class.getCanonicalName())) {
 						return true;
