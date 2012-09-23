@@ -35,8 +35,17 @@ public class EqualsRequiredProcessor extends AnnotationProcessor {
 	@Override
 	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 		for (TypeElement type : ElementFilter.typesIn(roundEnv.getElementsAnnotatedWith(EqualsRequired.class))) {
-			if (!hasEquals(type)) {
+			if (!type.getKind().isInterface() && !hasEquals(type)) {
 				error("Class does not override equals method", type);
+			}
+		}
+		for (TypeElement annotation : annotations) {
+			if (annotation.getAnnotation(EqualsRequired.class) != null) {
+				for (TypeElement type : ElementFilter.typesIn(roundEnv.getElementsAnnotatedWith(annotation))) {
+					if (!type.getKind().isInterface() && !hasEquals(type)) {
+						error("Class does not override equals method", type);
+					}
+				}
 			}
 		}
 		return false;
@@ -44,8 +53,12 @@ public class EqualsRequiredProcessor extends AnnotationProcessor {
 
 	public boolean hasEquals(TypeElement type) {
 		for (ExecutableElement method : ElementFilter.methodsIn(type.getEnclosedElements())) {
-			if (method.getSimpleName().toString().equals("equals")) {
-				return true;
+			if (method.getSimpleName().toString().equals("equals") ) {
+				if (method.getParameters().size() == 1 && method.getParameters().get(0).asType().toString().equals(Object.class.getCanonicalName())) {
+					if (method.getReturnType().toString().equals(boolean.class.getCanonicalName())) {
+						return true;
+					}
+				}
 			}
 		}
 		return false;
